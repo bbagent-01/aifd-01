@@ -18,7 +18,7 @@ export const DEFAULT_SEMANTIC = {
   'bg-card': 'neutral-50',
   'text-primary': 'dark-900',
   'text-secondary': 'neutral-700',
-  'text-on-action': 'primary-50',
+  'text-on-action': 'neutral-50',
   'action-primary': 'primary-500',
   'action-primary-hover': 'primary-600',
   'border-default': 'neutral-200',

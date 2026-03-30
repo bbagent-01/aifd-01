@@ -153,13 +153,16 @@ function SpacingVis() {
 function ProofComponents() {
   return (
     <div
-      className="space-y-6"
-      style={{ backgroundColor: 'var(--bb-bg-primary)', padding: 'var(--bb-space-8)', borderRadius: 'var(--bb-radius)' }}
+      style={{
+        backgroundColor: 'var(--bb-bg-primary)',
+        padding: 'var(--bb-section-padding) var(--bb-container-padding)',
+        borderRadius: 'var(--bb-radius)',
+      }}
     >
       {/* Buttons */}
-      <div>
+      <div style={{ marginBottom: 'var(--bb-component-gap)' }}>
         <div className="text-[10px] font-mono text-gray-400 mb-3">Buttons</div>
-        <div className="flex flex-wrap gap-3 items-center">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--bb-component-gap)', alignItems: 'center' }}>
           <ProofButton variant="primary" size="sm">Small</ProofButton>
           <ProofButton variant="primary" size="md">Primary</ProofButton>
           <ProofButton variant="primary" size="lg">Large</ProofButton>
@@ -171,7 +174,7 @@ function ProofComponents() {
       {/* Cards */}
       <div>
         <div className="text-[10px] font-mono text-gray-400 mb-3">Cards</div>
-        <div className="grid grid-cols-3 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--bb-component-gap)' }}>
           <ProofCard title="Design Tokens">
             Foundation colors cascade through semantic assignments to every component automatically.
           </ProofCard>
@@ -190,7 +193,7 @@ function ProofComponents() {
 export default function PreviewPanel() {
   return (
     <main className="flex-1 overflow-y-auto" style={{ backgroundColor: 'var(--bb-bg-surface, #f9fafb)' }}>
-      <div className="p-8 max-w-5xl mx-auto">
+      <div style={{ padding: 'var(--bb-container-padding)', maxWidth: 'var(--bb-max-width)', margin: '0 auto' }}>
         <SectionTitle>Color Palette</SectionTitle>
         <ColorPalette />
 

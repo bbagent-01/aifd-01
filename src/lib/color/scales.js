@@ -1,33 +1,66 @@
 import chroma from 'chroma-js';
 
 /**
- * Generate a 10-step color scale from a single hex value.
+ * Generate an 11-step color scale from a single hex value.
  * Uses Oklch color space for perceptual uniformity.
  * Steps: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
- * 500 is closest to the input color.
+ * 500 is the input color. 50 is near-white, 950 is near-black.
+ *
+ * We use explicit lightness targets in Oklch to get well-distributed steps
+ * rather than simple interpolation which clusters too much.
  */
 export function generateScale(hex) {
-  const steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+  const base = chroma(hex);
 
-  // Create a scale from white → input color → near-black
-  // Using oklch for perceptual uniformity
-  const lightScale = chroma.scale(['#ffffff', hex]).mode('oklch').colors(7);
-  const darkScale = chroma.scale([hex, '#0a0a0a']).mode('oklch').colors(7);
-
-  // Map to our 11 steps
-  const colors = {
-    50: lightScale[1],   // very light
-    100: lightScale[2],  // light
-    200: lightScale[3],  // lighter
-    300: lightScale[4],  // light-mid
-    400: lightScale[5],  // mid-light
-    500: hex,            // base (input color)
-    600: darkScale[1],   // mid-dark
-    700: darkScale[2],   // darker
-    800: darkScale[3],   // dark
-    900: darkScale[4],   // very dark
-    950: darkScale[5],   // near-black
+  // Target lightness values (Oklch L, 0-1 range)
+  // Designed so 50 is very light and 950 is very dark
+  const lightnessTargets = {
+    50: 0.97,
+    100: 0.93,
+    200: 0.87,
+    300: 0.78,
+    400: 0.68,
+    500: null, // use the actual input color
+    600: 0.45,
+    700: 0.37,
+    800: 0.29,
+    900: 0.21,
+    950: 0.14,
   };
+
+  const colors = {};
+
+  for (const [step, targetL] of Object.entries(lightnessTargets)) {
+    if (targetL === null) {
+      colors[step] = hex;
+      continue;
+    }
+
+    try {
+      // Get the base color's hue and chroma in Oklch
+      const [, c, h] = base.oklch();
+
+      // Scale chroma based on distance from 500
+      // Light steps get less chroma, dark steps get moderate chroma
+      const stepNum = parseInt(step);
+      let chromaScale;
+      if (stepNum < 500) {
+        // Light end: progressively desaturate toward white
+        chromaScale = (stepNum / 500) * 0.8 + 0.2;
+      } else {
+        // Dark end: moderate desaturation
+        chromaScale = 1 - ((stepNum - 500) / 500) * 0.5;
+      }
+
+      const adjustedChroma = (c || 0) * chromaScale;
+      colors[step] = chroma.oklch(targetL, adjustedChroma, h || 0).hex();
+    } catch {
+      // Fallback: simple interpolation
+      const stepNum = parseInt(step);
+      const t = stepNum / 1000;
+      colors[step] = chroma.mix('#ffffff', hex, t, 'oklch').hex();
+    }
+  }
 
   return colors;
 }

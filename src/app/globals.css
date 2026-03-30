@@ -95,3 +95,84 @@ input[type="color"]::-webkit-color-swatch {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-editor-text-muted);
 }
+
+/* ============================================
+   PROOF COMPONENT STYLES
+   These use --bb-* tokens exclusively.
+   CSS classes enable :hover, :focus, :active
+   which inline styles can't handle.
+   ============================================ */
+
+.bb-btn {
+  font-family: var(--bb-font-body);
+  font-weight: 500;
+  border-radius: var(--bb-button-radius);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sizes */
+.bb-btn-sm { padding: var(--bb-space-2) var(--bb-space-3); font-size: var(--bb-text-sm); }
+.bb-btn-md { padding: var(--bb-space-3) var(--bb-space-5); font-size: var(--bb-text-base); }
+.bb-btn-lg { padding: var(--bb-space-4) var(--bb-space-8); font-size: var(--bb-text-lg); }
+
+/* Primary */
+.bb-btn-primary {
+  background-color: var(--bb-action-primary);
+  color: var(--bb-text-on-action);
+  border: none;
+}
+.bb-btn-primary:hover {
+  background-color: var(--bb-action-primary-hover);
+}
+
+/* Secondary */
+.bb-btn-secondary {
+  background-color: transparent;
+  color: var(--bb-action-primary);
+  border: 1px solid var(--bb-border-default);
+}
+.bb-btn-secondary:hover {
+  background-color: var(--bb-action-primary);
+  color: var(--bb-text-on-action);
+  border-color: var(--bb-action-primary);
+}
+
+/* Ghost */
+.bb-btn-ghost {
+  background-color: transparent;
+  color: var(--bb-text-primary);
+  border: none;
+}
+.bb-btn-ghost:hover {
+  background-color: var(--bb-bg-card);
+}
+
+/* Card */
+.bb-card {
+  background-color: var(--bb-bg-card);
+  border: 1px solid var(--bb-border-default);
+  border-radius: var(--bb-radius);
+  padding: var(--bb-space-6);
+  box-shadow: var(--bb-shadow);
+  font-family: var(--bb-font-body);
+}
+
+.bb-card-title {
+  font-family: var(--bb-font-heading);
+  font-weight: var(--bb-heading-weight);
+  font-size: var(--bb-text-lg);
+  color: var(--bb-text-primary);
+  line-height: var(--bb-heading-line-height);
+  margin: 0 0 var(--bb-space-2) 0;
+}
+
+.bb-card-body {
+  font-size: var(--bb-text-sm);
+  color: var(--bb-text-secondary);
+  line-height: var(--bb-line-height);
+}

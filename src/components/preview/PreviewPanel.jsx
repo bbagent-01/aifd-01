@@ -7,6 +7,11 @@ import Input from './atoms/Input';
 import Badge from './atoms/Badge';
 import Toggle from './atoms/Toggle';
 import ProofCard from './ProofCard';
+import NavBar from './molecules/NavBar';
+import FeatureBlock from './molecules/FeatureBlock';
+import StatsBlock from './molecules/StatsBlock';
+import Testimonial from './molecules/Testimonial';
+import PricingCard from './molecules/PricingCard';
 
 const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
@@ -281,9 +286,97 @@ export default function PreviewPanel() {
         <SectionTitle>Spacing Scale</SectionTitle>
         <SpacingVis />
 
-        <SectionTitle>Components</SectionTitle>
+        <SectionTitle>Atoms</SectionTitle>
         <ComponentShowcase />
+
+        <SectionTitle>Molecules</SectionTitle>
+        <MoleculeShowcase />
       </div>
     </main>
+  );
+}
+
+function MoleculeShowcase() {
+  return (
+    <div
+      style={{
+        backgroundColor: 'var(--bb-bg-primary)',
+        padding: 'var(--bb-container-padding)',
+        borderRadius: 'var(--bb-container-radius)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--bb-space-8)',
+      }}
+    >
+      {/* Nav Bar */}
+      <div>
+        <ComponentLabel>Navigation Bar</ComponentLabel>
+        <NavBar />
+      </div>
+
+      {/* Feature Grid */}
+      <div>
+        <ComponentLabel>Feature Grid</ComponentLabel>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--bb-component-gap)' }}>
+          <FeatureBlock icon="⚡" title="Lightning Fast" description="Optimized for speed with sub-second load times across all devices." />
+          <FeatureBlock icon="🎨" title="Fully Themeable" description="Every color, font, and spacing value is driven by design tokens." />
+          <FeatureBlock icon="📦" title="Export Anywhere" description="Generate CSS, Tailwind, or Figma variables from your design system." />
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div>
+        <ComponentLabel>Stats Block</ComponentLabel>
+        <StatsBlock stats={[
+          { value: '12K+', label: 'Active Users' },
+          { value: '450', label: 'Projects Shipped' },
+          { value: '99%', label: 'Uptime' },
+          { value: '4.9', label: 'Average Rating' },
+        ]} />
+      </div>
+
+      {/* Testimonials */}
+      <div>
+        <ComponentLabel>Testimonials</ComponentLabel>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--bb-component-gap)' }}>
+          <Testimonial
+            quote="This design system saved us weeks of work. The token cascade means we change one color and the whole brand updates."
+            name="Sarah Chen"
+            role="Design Lead, Acme Corp"
+          />
+          <Testimonial
+            quote="Finally a tool that bridges the gap between design and code. The Figma export is a game changer for our workflow."
+            name="Marcus Rivera"
+            role="Frontend Engineer, Startup Co"
+          />
+        </div>
+      </div>
+
+      {/* Pricing */}
+      <div>
+        <ComponentLabel>Pricing Cards</ComponentLabel>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--bb-component-gap)' }}>
+          <PricingCard
+            name="Starter"
+            price="$0"
+            period="month"
+            features={['5 design tokens', 'CSS export', 'Basic components']}
+          />
+          <PricingCard
+            name="Pro"
+            price="$29"
+            period="month"
+            features={['Unlimited tokens', 'All export formats', 'Full component library', 'Figma sync']}
+            highlighted
+          />
+          <PricingCard
+            name="Team"
+            price="$79"
+            period="month"
+            features={['Everything in Pro', 'Team collaboration', 'Version history', 'Priority support']}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

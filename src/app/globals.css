@@ -1,30 +1,97 @@
 @import "tailwindcss";
 
+/* ============================================
+   EDITOR CHROME THEME
+   The editor UI uses these Tailwind theme tokens.
+   Preview components use ONLY --bb-* variables.
+   ============================================ */
+
 @theme {
-  /* BB Base Theme — Surface */
-  --color-surface-1: #09090b;
-  --color-surface-2: #0f0f12;
-  --color-surface-3: #16161a;
-  --color-surface-4: #1e1e24;
-
-  /* Accents */
-  --color-coral: #e8735e;
-  --color-coral-light: #f09a8a;
-  --color-coral-dark: #c45a47;
-  --color-amber: #d4a23a;
-  --color-amber-light: #e4be6a;
-
-  /* Typography */
-  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --color-editor-bg: #111318;
+  --color-editor-surface: #1a1d24;
+  --color-editor-border: #2a2d35;
+  --color-editor-text: #e4e4e7;
+  --color-editor-text-muted: #8b8d94;
+  --color-editor-accent: #6366f1;
+  --color-editor-accent-hover: #818cf8;
+  --color-preview-bg: #ffffff;
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-html {
-  scroll-behavior: smooth;
+/* ============================================
+   GLOBAL RESETS
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
+  margin: 0;
+  background: var(--color-editor-bg);
+  color: var(--color-editor-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--color-editor-border);
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--color-editor-accent);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--color-editor-accent-hover);
+}
+
+/* Color input styling */
+input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: 1px solid var(--color-editor-border);
+  border-radius: 4px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-editor-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-editor-text-muted);
 }

@@ -215,6 +215,8 @@ const useTokenStore = create(
     }),
     {
       name: 'bb-ds-config',
+      // Bump this when defaults change to force a reset for existing users
+      version: 2,
       // Don't persist undo history or computed scales
       partialize: (state) => ({
         foundationColors: state.foundationColors,
@@ -223,6 +225,16 @@ const useTokenStore = create(
         spacing: state.spacing,
         borders: state.borders,
       }),
+      // When version changes, migrate by resetting to new defaults
+      migrate: () => {
+        return {
+          foundationColors: { ...DEFAULT_FOUNDATION_COLORS },
+          semantic: { ...DEFAULT_SEMANTIC },
+          typography: { ...DEFAULT_TYPOGRAPHY },
+          spacing: { ...DEFAULT_SPACING },
+          borders: { ...DEFAULT_BORDERS },
+        };
+      },
       // Recompute scales on hydration
       onRehydrateStorage: () => (state) => {
         if (state) {

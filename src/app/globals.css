@@ -193,11 +193,11 @@ input[type="color"]::-webkit-color-swatch {
    ============================================ */
 
 .bb-card {
-  background: var(--bb-card-gradient, var(--bb-bg-card));
-  border: 1px solid var(--bb-border-default);
+  background: var(--bb-card-bg);
+  border: var(--bb-card-border-width) solid var(--bb-card-border-color);
   border-radius: var(--bb-card-radius);
   padding: var(--bb-space-6);
-  box-shadow: var(--bb-shadow);
+  box-shadow: var(--bb-card-shadow-value);
   font-family: var(--bb-font-body);
 }
 
@@ -205,7 +205,7 @@ input[type="color"]::-webkit-color-swatch {
   font-family: var(--bb-font-heading);
   font-weight: var(--bb-heading-weight);
   font-size: var(--bb-text-lg);
-  color: var(--bb-text-primary);
+  color: var(--bb-card-title-color);
   line-height: var(--bb-heading-line-height);
   letter-spacing: var(--bb-tracking-heading);
   margin: 0 0 var(--bb-space-2) 0;
@@ -213,9 +213,18 @@ input[type="color"]::-webkit-color-swatch {
 
 .bb-card-body {
   font-size: var(--bb-text-sm);
-  color: var(--bb-text-secondary);
+  color: var(--bb-card-body-color);
   line-height: var(--bb-line-height);
 }
+
+/* Dark card context */
+.bb-dark .bb-card {
+  background: var(--bb-card-dark-bg);
+  border: var(--bb-card-dark-border-width) solid var(--bb-card-dark-border-color);
+  box-shadow: var(--bb-card-dark-shadow-value);
+}
+.bb-dark .bb-card-title { color: var(--bb-card-dark-title-color); }
+.bb-dark .bb-card-body { color: var(--bb-card-dark-body-color); }
 
 /* ============================================
    INPUT
@@ -231,16 +240,16 @@ input[type="color"]::-webkit-color-swatch {
   font-family: var(--bb-font-body);
   font-size: var(--bb-text-sm);
   font-weight: 500;
-  color: var(--bb-text-primary);
+  color: var(--bb-input-label-color);
 }
 
 .bb-input {
   font-family: var(--bb-font-body);
   font-size: var(--bb-text-base);
   letter-spacing: var(--bb-tracking-body);
-  color: var(--bb-text-primary);
-  background-color: var(--bb-bg-card);
-  border: 1px solid var(--bb-border-default);
+  color: var(--bb-input-text);
+  background-color: var(--bb-input-bg);
+  border: var(--bb-input-border-width) solid var(--bb-input-border-color);
   border-radius: var(--bb-input-radius);
   padding: var(--bb-space-2) var(--bb-space-3);
   outline: none;
@@ -250,13 +259,13 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 .bb-input::placeholder {
-  color: var(--bb-text-secondary);
+  color: var(--bb-input-placeholder);
   opacity: 0.6;
 }
 
 .bb-input:focus {
-  border-color: var(--bb-border-focus);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bb-border-focus) 20%, transparent);
+  border-color: var(--bb-input-focus-border);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bb-input-focus-border) 20%, transparent);
 }
 
 .bb-input-error {
@@ -266,6 +275,19 @@ input[type="color"]::-webkit-color-swatch {
 .bb-input-error:focus {
   border-color: var(--bb-feedback-error);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--bb-feedback-error) 20%, transparent);
+}
+
+/* Dark input context */
+.bb-dark .bb-input-label { color: var(--bb-input-dark-label-color); }
+.bb-dark .bb-input {
+  color: var(--bb-input-dark-text);
+  background-color: var(--bb-input-dark-bg);
+  border: var(--bb-input-dark-border-width) solid var(--bb-input-dark-border-color);
+}
+.bb-dark .bb-input::placeholder { color: var(--bb-input-dark-placeholder); }
+.bb-dark .bb-input:focus {
+  border-color: var(--bb-input-dark-focus-border);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bb-input-dark-focus-border) 20%, transparent);
 }
 
 .bb-input-hint {

@@ -13,6 +13,11 @@ import {
   DEFAULT_BUTTON_TOKENS,
   DEFAULT_BUTTON_TOKENS_DARK,
   DEFAULT_BUTTON_TRANSITION,
+  DEFAULT_CARD_TOKENS,
+  DEFAULT_CARD_TOKENS_DARK,
+  DEFAULT_INPUT_TOKENS,
+  DEFAULT_INPUT_TOKENS_DARK,
+  STYLE_MODES,
   generateDefaultGradients,
 } from './defaults';
 
@@ -36,6 +41,10 @@ const useTokenStore = create(
       buttonTokens: { ...DEFAULT_BUTTON_TOKENS },
       buttonTokensDark: { ...DEFAULT_BUTTON_TOKENS_DARK },
       buttonTransition: { ...DEFAULT_BUTTON_TRANSITION },
+      cardTokens: { ...DEFAULT_CARD_TOKENS },
+      cardTokensDark: { ...DEFAULT_CARD_TOKENS_DARK },
+      inputTokens: { ...DEFAULT_INPUT_TOKENS },
+      inputTokensDark: { ...DEFAULT_INPUT_TOKENS_DARK },
 
       // Undo history (simple implementation)
       _history: [],
@@ -56,6 +65,10 @@ const useTokenStore = create(
           buttonTokens: JSON.parse(JSON.stringify(s.buttonTokens)),
           buttonTokensDark: JSON.parse(JSON.stringify(s.buttonTokensDark)),
           buttonTransition: { ...s.buttonTransition },
+          cardTokens: { ...s.cardTokens },
+          cardTokensDark: { ...s.cardTokensDark },
+          inputTokens: { ...s.inputTokens },
+          inputTokensDark: { ...s.inputTokensDark },
         };
       },
 
@@ -206,6 +219,38 @@ const useTokenStore = create(
         }));
       },
 
+      // --- Actions: Card Tokens ---
+      setCardToken: (key, value) => {
+        get()._pushHistory();
+        set((s) => ({ cardTokens: { ...s.cardTokens, [key]: value } }));
+      },
+      setCardTokenDark: (key, value) => {
+        get()._pushHistory();
+        set((s) => ({ cardTokensDark: { ...s.cardTokensDark, [key]: value } }));
+      },
+
+      // --- Actions: Input Tokens ---
+      setInputToken: (key, value) => {
+        get()._pushHistory();
+        set((s) => ({ inputTokens: { ...s.inputTokens, [key]: value } }));
+      },
+      setInputTokenDark: (key, value) => {
+        get()._pushHistory();
+        set((s) => ({ inputTokensDark: { ...s.inputTokensDark, [key]: value } }));
+      },
+
+      // --- Actions: Style Modes ---
+      applyStyleMode: (modeKey) => {
+        const mode = STYLE_MODES[modeKey];
+        if (!mode) return;
+        get()._pushHistory();
+        set((s) => {
+          const updates = {};
+          if (mode.tokens.borders) updates.borders = { ...s.borders, ...mode.tokens.borders };
+          return updates;
+        });
+      },
+
       // --- Actions: Typography ---
       setTypography: (key, value) => {
         get()._pushHistory();
@@ -289,6 +334,10 @@ const useTokenStore = create(
           buttonTokens: { ...DEFAULT_BUTTON_TOKENS },
           buttonTokensDark: { ...DEFAULT_BUTTON_TOKENS_DARK },
           buttonTransition: { ...DEFAULT_BUTTON_TRANSITION },
+          cardTokens: { ...DEFAULT_CARD_TOKENS },
+          cardTokensDark: { ...DEFAULT_CARD_TOKENS_DARK },
+          inputTokens: { ...DEFAULT_INPUT_TOKENS },
+          inputTokensDark: { ...DEFAULT_INPUT_TOKENS_DARK },
         });
       },
 
@@ -307,6 +356,10 @@ const useTokenStore = create(
           buttonTokens: config.buttonTokens || DEFAULT_BUTTON_TOKENS,
           buttonTokensDark: config.buttonTokensDark || DEFAULT_BUTTON_TOKENS_DARK,
           buttonTransition: config.buttonTransition || DEFAULT_BUTTON_TRANSITION,
+          cardTokens: config.cardTokens || DEFAULT_CARD_TOKENS,
+          cardTokensDark: config.cardTokensDark || DEFAULT_CARD_TOKENS_DARK,
+          inputTokens: config.inputTokens || DEFAULT_INPUT_TOKENS,
+          inputTokensDark: config.inputTokensDark || DEFAULT_INPUT_TOKENS_DARK,
         });
       },
 
@@ -323,6 +376,10 @@ const useTokenStore = create(
           buttonTokens: s.buttonTokens,
           buttonTokensDark: s.buttonTokensDark,
           buttonTransition: s.buttonTransition,
+          cardTokens: s.cardTokens,
+          cardTokensDark: s.cardTokensDark,
+          inputTokens: s.inputTokens,
+          inputTokensDark: s.inputTokensDark,
         };
       },
 
@@ -336,7 +393,7 @@ const useTokenStore = create(
     {
       name: 'bb-ds-config',
       // Bump this when defaults change to force a reset for existing users
-      version: 6,
+      version: 7,
       // Don't persist undo history or computed scales
       partialize: (state) => ({
         foundationColors: state.foundationColors,
@@ -349,6 +406,10 @@ const useTokenStore = create(
         buttonTokens: state.buttonTokens,
         buttonTokensDark: state.buttonTokensDark,
         buttonTransition: state.buttonTransition,
+        cardTokens: state.cardTokens,
+        cardTokensDark: state.cardTokensDark,
+        inputTokens: state.inputTokens,
+        inputTokensDark: state.inputTokensDark,
       }),
       // Migrate persisted state to current schema
       migrate: (persisted) => {
@@ -362,6 +423,10 @@ const useTokenStore = create(
           buttonTokens: persisted?.buttonTokens || { ...DEFAULT_BUTTON_TOKENS },
           buttonTokensDark: persisted?.buttonTokensDark || { ...DEFAULT_BUTTON_TOKENS_DARK },
           buttonTransition: persisted?.buttonTransition || { ...DEFAULT_BUTTON_TRANSITION },
+          cardTokens: persisted?.cardTokens || { ...DEFAULT_CARD_TOKENS },
+          cardTokensDark: persisted?.cardTokensDark || { ...DEFAULT_CARD_TOKENS_DARK },
+          inputTokens: persisted?.inputTokens || { ...DEFAULT_INPUT_TOKENS },
+          inputTokensDark: persisted?.inputTokensDark || { ...DEFAULT_INPUT_TOKENS_DARK },
         };
         // Always regenerate gradients from foundation colors (ensures per-color coverage)
         state.gradients = generateDefaultGradients(state.foundationColors);

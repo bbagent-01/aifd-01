@@ -10,6 +10,9 @@ import TypographySection from './sections/TypographySection';
 import SpacingSection from './sections/SpacingSection';
 import BorderSection from './sections/BorderSection';
 import ButtonStyleSection from './sections/ButtonStyleSection';
+import CardStyleSection from './sections/CardStyleSection';
+import InputStyleSection from './sections/InputStyleSection';
+import StyleModeSection from './sections/StyleModeSection';
 import { generateCSS } from '@/lib/export/css';
 import { generateDTCG } from '@/lib/export/dtcg';
 import { downloadJSON, uploadJSON, copyToClipboard } from '@/lib/persistence/storage';
@@ -133,6 +136,10 @@ export default function EditorLayout() {
         <Sidebar
           tokenSections={
             <>
+              <SidebarSection title="Style Mode" defaultOpen={true}>
+                <StyleModeSection />
+              </SidebarSection>
+
               <SidebarSection title="Colors" defaultOpen={true}>
                 <ColorSection />
               </SidebarSection>
@@ -156,6 +163,13 @@ export default function EditorLayout() {
                 <ButtonStyleSection />
               </SidebarSection>
 
+              <SidebarSection title="Card Styles" defaultOpen={true}>
+                <CardStyleSection />
+              </SidebarSection>
+
+              <SidebarSection title="Input Styles" defaultOpen={true}>
+                <InputStyleSection />
+              </SidebarSection>
             </>
           }
         />

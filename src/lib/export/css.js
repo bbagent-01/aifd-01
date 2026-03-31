@@ -6,7 +6,7 @@ import { TYPE_SCALE, SHADOW_PRESETS } from '@/lib/tokens/defaults';
  * @param {string} mode - 'resolved' (flat values) or 'referenced' (var() chains)
  */
 export function generateCSS(state, mode = 'resolved') {
-  const { scales, semantic, typography, spacing, borders, gradients, elementGradients, buttonTokens, buttonTokensDark, buttonTransition } = state;
+  const { scales, semantic, typography, spacing, borders, gradients, elementGradients, buttonTokens, buttonTokensDark, buttonTransition, cardTokens, cardTokensDark, inputTokens, inputTokensDark } = state;
   const lines = [':root {'];
 
   if (mode === 'referenced') {
@@ -128,6 +128,35 @@ export function generateCSS(state, mode = 'resolved') {
   };
   emitBtnTokens(buttonTokens, '');
   emitBtnTokens(buttonTokensDark, 'dark-');
+
+  // Card tokens
+  const emitCardTokens = (t, prefix) => {
+    if (!t) return;
+    lines.push('');
+    lines.push(`  --bb-card-${prefix}bg: ${resolveBg(t.bg)};`);
+    lines.push(`  --bb-card-${prefix}border-color: ${t.borderColor ? resolve(t.borderColor) : 'transparent'};`);
+    lines.push(`  --bb-card-${prefix}border-width: ${t.borderWidth ?? 1}px;`);
+    lines.push(`  --bb-card-${prefix}shadow-value: ${SHADOW_PRESETS[t.shadow] || 'none'};`);
+    lines.push(`  --bb-card-${prefix}title-color: ${resolve(t.titleColor)};`);
+    lines.push(`  --bb-card-${prefix}body-color: ${resolve(t.bodyColor)};`);
+  };
+  emitCardTokens(cardTokens, '');
+  emitCardTokens(cardTokensDark, 'dark-');
+
+  // Input tokens
+  const emitInputTokens = (t, prefix) => {
+    if (!t) return;
+    lines.push('');
+    lines.push(`  --bb-input-${prefix}bg: ${resolve(t.bg)};`);
+    lines.push(`  --bb-input-${prefix}text: ${resolve(t.text)};`);
+    lines.push(`  --bb-input-${prefix}border-color: ${t.borderColor ? resolve(t.borderColor) : 'transparent'};`);
+    lines.push(`  --bb-input-${prefix}border-width: ${t.borderWidth ?? 1}px;`);
+    lines.push(`  --bb-input-${prefix}focus-border: ${resolve(t.focusBorderColor)};`);
+    lines.push(`  --bb-input-${prefix}placeholder: ${resolve(t.placeholderColor)};`);
+    lines.push(`  --bb-input-${prefix}label-color: ${resolve(t.labelColor)};`);
+  };
+  emitInputTokens(inputTokens, '');
+  emitInputTokens(inputTokensDark, 'dark-');
 
   lines.push('}');
   return lines.join('\n');

@@ -128,6 +128,70 @@ export const DEFAULT_BUTTON_TRANSITION = {
   easing: 'ease',
 };
 
+// Card component tokens
+export const DEFAULT_CARD_TOKENS = {
+  bg: 'accent-50',
+  borderColor: 'neutral-200',
+  borderWidth: 1,
+  shadow: 'subtle',
+  titleColor: 'dark-900',
+  bodyColor: 'secondary-700',
+};
+
+export const DEFAULT_CARD_TOKENS_DARK = {
+  bg: 'dark-700',
+  borderColor: 'neutral-700',
+  borderWidth: 1,
+  shadow: 'none',
+  titleColor: 'accent-50',
+  bodyColor: 'neutral-300',
+};
+
+// Input component tokens
+export const DEFAULT_INPUT_TOKENS = {
+  bg: 'accent-50',
+  text: 'dark-900',
+  borderColor: 'neutral-200',
+  borderWidth: 1,
+  focusBorderColor: 'primary-400',
+  placeholderColor: 'secondary-700',
+  labelColor: 'dark-900',
+};
+
+export const DEFAULT_INPUT_TOKENS_DARK = {
+  bg: 'dark-700',
+  text: 'accent-50',
+  borderColor: 'neutral-600',
+  borderWidth: 1,
+  focusBorderColor: 'primary-400',
+  placeholderColor: 'neutral-400',
+  labelColor: 'accent-100',
+};
+
+// Style mode presets — set foundation tokens only
+export const STYLE_MODES = {
+  rectilinear: {
+    label: 'Rectilinear',
+    description: 'Sharp edges, no shadows, strong borders',
+    tokens: { borders: { radius: 0, cardMult: 0, containerMult: 0, buttonMult: 0, inputMult: 0, shadow: 'none' } },
+  },
+  bento: {
+    label: 'Bento',
+    description: 'Medium radius, subtle shadows, generous spacing',
+    tokens: { borders: { radius: 12, cardMult: 1.5, containerMult: 2, buttonMult: 0.75, inputMult: 0.75, shadow: 'medium' } },
+  },
+  soft: {
+    label: 'Soft',
+    description: 'Large radius, soft shadows, relaxed feel',
+    tokens: { borders: { radius: 16, cardMult: 1.5, containerMult: 1.5, buttonMult: 1, inputMult: 1, shadow: 'subtle' } },
+  },
+  rounded: {
+    label: 'Rounded',
+    description: 'Full radius, medium shadows, pill buttons',
+    tokens: { borders: { radius: 20, cardMult: 1, containerMult: 1.5, buttonMult: 50, inputMult: 1, shadow: 'medium' } },
+  },
+};
+
 // Type scale — derived from baseSize using a ratio
 export const TYPE_SCALE = {
   xs: 0.75,

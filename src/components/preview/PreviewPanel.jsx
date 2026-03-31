@@ -390,6 +390,29 @@ function DarkComponentShowcase() {
         <Button variant="primary" size="lg">Large</Button>
       </div>
 
+      {/* Cards on dark */}
+      <ComponentLabel>
+        <span style={{ color: 'var(--bb-text-dark-secondary)' }}>Cards (Dark)</span>
+      </ComponentLabel>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--bb-component-gap)' }}>
+        <ProofCard title="Dark Card">
+          Cards automatically adapt their background, border, and text colors to dark context.
+        </ProofCard>
+        <ProofCard title="Dark Card">
+          Shadow and border styling is independently configurable for dark backgrounds.
+        </ProofCard>
+      </div>
+
+      {/* Inputs on dark */}
+      <ComponentLabel>
+        <span style={{ color: 'var(--bb-text-dark-secondary)' }}>Inputs (Dark)</span>
+      </ComponentLabel>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--bb-component-gap)' }}>
+        <Input label="Email" placeholder="you@example.com" type="email" />
+        <Input label="Full Name" placeholder="Jane Doe" />
+      </div>
+
+      {/* Text on dark */}
       <ComponentLabel>
         <span style={{ color: 'var(--bb-text-dark-secondary)' }}>Text on Dark</span>
       </ComponentLabel>
@@ -398,7 +421,7 @@ function DarkComponentShowcase() {
           Heading on dark background
         </div>
         <div style={{ fontFamily: 'var(--bb-font-body)', fontSize: 'var(--bb-text-base)', color: 'var(--bb-text-dark-secondary)' }}>
-          Body text on dark background — this shows how typography adapts to dark sections like hero areas, footers, and dark cards.
+          Body text on dark background — typography adapts to dark sections like hero areas, footers, and dark cards.
         </div>
       </div>
     </div>

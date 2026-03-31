@@ -20,6 +20,10 @@ export default function TokenStyleInjector() {
   const buttonTokens = useTokenStore((s) => s.buttonTokens);
   const buttonTokensDark = useTokenStore((s) => s.buttonTokensDark);
   const buttonTransition = useTokenStore((s) => s.buttonTransition);
+  const cardTokens = useTokenStore((s) => s.cardTokens);
+  const cardTokensDark = useTokenStore((s) => s.cardTokensDark);
+  const inputTokens = useTokenStore((s) => s.inputTokens);
+  const inputTokensDark = useTokenStore((s) => s.inputTokensDark);
 
   useEffect(() => {
     const lines = [':root {'];
@@ -132,6 +136,33 @@ export default function TokenStyleInjector() {
     if (buttonTokens) emitButtonTokens(buttonTokens, '');
     if (buttonTokensDark) emitButtonTokens(buttonTokensDark, 'dark-');
 
+    // Card component tokens
+    const emitCardTokens = (t, prefix) => {
+      if (!t) return;
+      lines.push(`  --bb-card-${prefix}bg: ${resolveBg(t.bg)};`);
+      lines.push(`  --bb-card-${prefix}border-color: ${t.borderColor ? resolve(t.borderColor) : 'transparent'};`);
+      lines.push(`  --bb-card-${prefix}border-width: ${t.borderWidth ?? 1}px;`);
+      lines.push(`  --bb-card-${prefix}shadow-value: ${SHADOW_PRESETS[t.shadow] || 'none'};`);
+      lines.push(`  --bb-card-${prefix}title-color: ${resolve(t.titleColor)};`);
+      lines.push(`  --bb-card-${prefix}body-color: ${resolve(t.bodyColor)};`);
+    };
+    emitCardTokens(cardTokens, '');
+    emitCardTokens(cardTokensDark, 'dark-');
+
+    // Input component tokens
+    const emitInputTokens = (t, prefix) => {
+      if (!t) return;
+      lines.push(`  --bb-input-${prefix}bg: ${resolve(t.bg)};`);
+      lines.push(`  --bb-input-${prefix}text: ${resolve(t.text)};`);
+      lines.push(`  --bb-input-${prefix}border-color: ${t.borderColor ? resolve(t.borderColor) : 'transparent'};`);
+      lines.push(`  --bb-input-${prefix}border-width: ${t.borderWidth ?? 1}px;`);
+      lines.push(`  --bb-input-${prefix}focus-border: ${resolve(t.focusBorderColor)};`);
+      lines.push(`  --bb-input-${prefix}placeholder: ${resolve(t.placeholderColor)};`);
+      lines.push(`  --bb-input-${prefix}label-color: ${resolve(t.labelColor)};`);
+    };
+    emitInputTokens(inputTokens, '');
+    emitInputTokens(inputTokensDark, 'dark-');
+
     lines.push('}');
 
     // Inject or update style tag
@@ -146,7 +177,7 @@ export default function TokenStyleInjector() {
     return () => {
       // Don't remove on unmount — persist until page unload
     };
-  }, [scales, semantic, typography, spacing, borders, gradients, elementGradients, buttonTokens, buttonTokensDark, buttonTransition]);
+  }, [scales, semantic, typography, spacing, borders, gradients, elementGradients, buttonTokens, buttonTokensDark, buttonTransition, cardTokens, cardTokensDark, inputTokens, inputTokensDark]);
 
   return null;
 }

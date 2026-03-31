@@ -80,10 +80,9 @@ export const DEFAULT_SEMANTIC_KEYS = Object.keys(DEFAULT_SEMANTIC);
 
 // Semantic token groups — for UI organization
 export const SEMANTIC_GROUPS = [
-  { label: 'Backgrounds', prefix: 'bg', keys: ['bg-primary', 'bg-surface', 'bg-card'], defaultRef: 'neutral-100' },
-  { label: 'Dark Backgrounds', prefix: 'bg-dark', keys: ['bg-dark-primary', 'bg-dark-surface', 'bg-dark-card'], defaultRef: 'dark-800' },
-  { label: 'Text', prefix: 'text', keys: ['text-primary', 'text-secondary', 'text-on-action'], defaultRef: 'dark-800' },
-  { label: 'Dark Text', prefix: 'text-dark', keys: ['text-dark-primary', 'text-dark-secondary'], defaultRef: 'accent-50' },
+  { label: 'Backgrounds', prefix: 'bg', keys: ['bg-primary', 'bg-surface', 'bg-card'], defaultRef: 'neutral-100', excludePrefix: 'bg-dark' },
+  { label: 'Text', prefix: 'text', keys: ['text-primary', 'text-secondary', 'text-on-action'], defaultRef: 'dark-800', excludePrefix: 'text-dark' },
+  { label: 'Dark', prefix: 'bg-dark', keys: ['bg-dark-primary', 'bg-dark-surface', 'bg-dark-card', 'text-dark-primary', 'text-dark-secondary'], defaultRef: 'dark-800', extraPrefixes: ['text-dark'] },
   { label: 'Actions', prefix: 'action', keys: ['action-primary', 'action-primary-hover', 'action-secondary', 'action-secondary-hover', 'action-destructive', 'action-destructive-hover'], defaultRef: 'primary-500' },
   { label: 'Borders', prefix: 'border', keys: ['border-default', 'border-faint', 'border-focus'], defaultRef: 'neutral-200' },
   { label: 'Feedback', prefix: 'feedback', keys: ['feedback-success', 'feedback-error'], defaultRef: 'neutral-500' },

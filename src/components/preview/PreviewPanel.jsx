@@ -56,9 +56,11 @@ function SemanticGrid() {
   // Group all semantic tokens by category
   const getGroupTokens = (group) => {
     const prefix = group.prefix + '-';
+    const exclude = group.excludePrefix ? group.excludePrefix + '-' : null;
     const defaultKeys = group.keys.filter((k) => semantic[k]);
+    const prefixes = [prefix, ...(group.extraPrefixes || []).map((p) => p + '-')];
     const customKeys = Object.keys(semantic).filter(
-      (k) => k.startsWith(prefix) && !group.keys.includes(k)
+      (k) => prefixes.some((p) => k.startsWith(p)) && !group.keys.includes(k) && (!exclude || !k.startsWith(exclude))
     );
     return [...defaultKeys, ...customKeys];
   };

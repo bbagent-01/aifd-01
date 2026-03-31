@@ -10,7 +10,6 @@ import TypographySection from './sections/TypographySection';
 import SpacingSection from './sections/SpacingSection';
 import BorderSection from './sections/BorderSection';
 import ButtonStyleSection from './sections/ButtonStyleSection';
-import ElementStyleSection from './sections/ElementStyleSection';
 import { generateCSS } from '@/lib/export/css';
 import { generateDTCG } from '@/lib/export/dtcg';
 import { downloadJSON, uploadJSON, copyToClipboard } from '@/lib/persistence/storage';
@@ -157,9 +156,6 @@ export default function EditorLayout() {
                 <ButtonStyleSection />
               </SidebarSection>
 
-              <SidebarSection title="Element Gradients" defaultOpen={true}>
-                <ElementStyleSection />
-              </SidebarSection>
             </>
           }
         />

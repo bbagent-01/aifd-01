@@ -41,11 +41,13 @@ export default function ColorSection() {
   // Build the list of tokens per group dynamically from the semantic map
   const getGroupTokens = (group) => {
     const prefix = group.prefix + '-';
+    const exclude = group.excludePrefix ? group.excludePrefix + '-' : null;
     // Start with the group's default keys that exist in semantic
     const defaultKeys = group.keys.filter((k) => semantic[k]);
-    // Find any custom tokens with the same prefix
+    // Find any custom tokens with the same prefix (excluding sub-prefixes)
+    const prefixes = [prefix, ...(group.extraPrefixes || []).map((p) => p + '-')];
     const customKeys = Object.keys(semantic).filter(
-      (k) => k.startsWith(prefix) && !group.keys.includes(k)
+      (k) => prefixes.some((p) => k.startsWith(p)) && !group.keys.includes(k) && (!exclude || !k.startsWith(exclude))
     );
     return [...defaultKeys, ...customKeys];
   };
@@ -277,7 +279,7 @@ export default function ColorSection() {
                   </button>
                 </div>
                 <div
-                  className="w-full h-6 rounded border border-editor-border"
+                  className="w-full h-18 rounded border border-editor-border"
                   style={{ background: gradientCSS }}
                 />
                 <SliderControl

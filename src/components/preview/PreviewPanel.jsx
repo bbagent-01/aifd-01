@@ -359,6 +359,50 @@ function ComponentShowcase() {
   );
 }
 
+function DarkComponentShowcase() {
+  return (
+    <div
+      className="bb-dark"
+      style={{
+        backgroundColor: 'var(--bb-bg-dark-primary)',
+        padding: 'var(--bb-container-padding)',
+        borderRadius: 'var(--bb-container-radius)',
+      }}
+    >
+      <ComponentLabel>
+        <span style={{ color: 'var(--bb-text-dark-secondary)' }}>Button Variants (Dark)</span>
+      </ComponentLabel>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--bb-space-3)', alignItems: 'center' }}>
+        <Button variant="primary">Primary</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="ghost">Ghost</Button>
+        <Button variant="destructive">Destructive</Button>
+      </div>
+
+      <ComponentLabel>
+        <span style={{ color: 'var(--bb-text-dark-secondary)' }}>Button Sizes (Dark)</span>
+      </ComponentLabel>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--bb-space-3)', alignItems: 'center' }}>
+        <Button variant="primary" size="sm">Small</Button>
+        <Button variant="primary" size="md">Medium</Button>
+        <Button variant="primary" size="lg">Large</Button>
+      </div>
+
+      <ComponentLabel>
+        <span style={{ color: 'var(--bb-text-dark-secondary)' }}>Text on Dark</span>
+      </ComponentLabel>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--bb-space-2)' }}>
+        <div style={{ fontFamily: 'var(--bb-font-heading)', fontSize: 'var(--bb-text-xl)', fontWeight: 'var(--bb-heading-weight)', color: 'var(--bb-text-dark-primary)' }}>
+          Heading on dark background
+        </div>
+        <div style={{ fontFamily: 'var(--bb-font-body)', fontSize: 'var(--bb-text-base)', color: 'var(--bb-text-dark-secondary)' }}>
+          Body text on dark background — this shows how typography adapts to dark sections like hero areas, footers, and dark cards.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PreviewPanel() {
   return (
     <main className="flex-1 overflow-y-auto" style={{ backgroundColor: 'var(--bb-bg-surface, #f9fafb)' }}>
@@ -378,8 +422,11 @@ export default function PreviewPanel() {
         <SectionTitle>Spacing Scale</SectionTitle>
         <SpacingVis />
 
-        <SectionTitle>Atoms</SectionTitle>
+        <SectionTitle>Atoms — Light</SectionTitle>
         <ComponentShowcase />
+
+        <SectionTitle>Atoms — Dark</SectionTitle>
+        <DarkComponentShowcase />
 
         <SectionTitle>Molecules</SectionTitle>
         <MoleculeShowcase />

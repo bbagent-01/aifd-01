@@ -6,7 +6,7 @@ import { TYPE_SCALE, SHADOW_PRESETS } from '@/lib/tokens/defaults';
  * @param {string} mode - 'resolved' (flat values) or 'referenced' (var() chains)
  */
 export function generateCSS(state, mode = 'resolved') {
-  const { scales, semantic, typography, spacing, borders, gradients, elementGradients, buttonTokens } = state;
+  const { scales, semantic, typography, spacing, borders, gradients, elementGradients, buttonTokens, buttonTokensDark, buttonTransition } = state;
   const lines = [':root {'];
 
   if (mode === 'referenced') {
@@ -88,23 +88,46 @@ export function generateCSS(state, mode = 'resolved') {
     }
   }
 
-  // Button tokens
-  if (buttonTokens) {
-    lines.push('');
-    const resolve = (ref) => {
-      if (!ref || ref === 'transparent') return ref || 'transparent';
-      if (scales[ref]) return scales[ref];
-      const semRef = semantic[ref];
-      if (semRef && scales[semRef]) return scales[semRef];
-      return ref;
-    };
-    for (const [variant, tokens] of Object.entries(buttonTokens)) {
-      lines.push(`  --bb-btn-${variant}-bg: ${resolve(tokens.bg)};`);
-      lines.push(`  --bb-btn-${variant}-hover: ${resolve(tokens.hover)};`);
-      lines.push(`  --bb-btn-${variant}-text: ${resolve(tokens.text)};`);
-      lines.push(`  --bb-btn-${variant}-border: ${tokens.border ? '1px solid ' + resolve(tokens.border) : 'none'};`);
+  // Resolve helpers
+  const resolve = (ref) => {
+    if (!ref || ref === 'transparent') return ref || 'transparent';
+    if (scales[ref]) return scales[ref];
+    const semRef = semantic[ref];
+    if (semRef && scales[semRef]) return scales[semRef];
+    return ref;
+  };
+  const resolveBg = (ref) => {
+    if (!ref || ref === 'transparent') return ref || 'transparent';
+    if (ref.startsWith('gradient-') && gradients && gradients[ref]) {
+      const grad = gradients[ref];
+      const resolvedStops = grad.stops.map((s) => scales[s] || '#ff00ff');
+      return `linear-gradient(${grad.angle}deg, ${resolvedStops.join(', ')})`;
     }
+    return resolve(ref);
+  };
+
+  // Button transition
+  if (buttonTransition) {
+    lines.push('');
+    lines.push(`  --bb-btn-transition-duration: ${buttonTransition.duration}s;`);
+    lines.push(`  --bb-btn-transition-easing: ${buttonTransition.easing};`);
   }
+
+  // Button tokens (light + dark)
+  const emitBtnTokens = (tokens, prefix) => {
+    if (!tokens) return;
+    lines.push('');
+    for (const [variant, t] of Object.entries(tokens)) {
+      lines.push(`  --bb-btn-${prefix}${variant}-bg: ${resolveBg(t.bg)};`);
+      lines.push(`  --bb-btn-${prefix}${variant}-text: ${resolve(t.text)};`);
+      lines.push(`  --bb-btn-${prefix}${variant}-border: ${t.border ? '1px solid ' + resolve(t.border) : 'none'};`);
+      lines.push(`  --bb-btn-${prefix}${variant}-hover-bg: ${resolveBg(t.hoverBg || t.bg)};`);
+      lines.push(`  --bb-btn-${prefix}${variant}-hover-text: ${t.hoverText ? resolve(t.hoverText) : resolve(t.text)};`);
+      lines.push(`  --bb-btn-${prefix}${variant}-hover-border: ${t.hoverBorder ? '1px solid ' + resolve(t.hoverBorder) : (t.border ? '1px solid ' + resolve(t.border) : 'none')};`);
+    }
+  };
+  emitBtnTokens(buttonTokens, '');
+  emitBtnTokens(buttonTokensDark, 'dark-');
 
   lines.push('}');
   return lines.join('\n');

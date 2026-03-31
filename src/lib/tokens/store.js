@@ -11,6 +11,8 @@ import {
   DEFAULT_GRADIENTS,
   DEFAULT_ELEMENT_GRADIENTS,
   DEFAULT_BUTTON_TOKENS,
+  DEFAULT_BUTTON_TOKENS_DARK,
+  DEFAULT_BUTTON_TRANSITION,
   generateDefaultGradients,
 } from './defaults';
 
@@ -32,6 +34,8 @@ const useTokenStore = create(
       gradients: { ...DEFAULT_GRADIENTS },
       elementGradients: { ...DEFAULT_ELEMENT_GRADIENTS },
       buttonTokens: { ...DEFAULT_BUTTON_TOKENS },
+      buttonTokensDark: { ...DEFAULT_BUTTON_TOKENS_DARK },
+      buttonTransition: { ...DEFAULT_BUTTON_TRANSITION },
 
       // Undo history (simple implementation)
       _history: [],
@@ -50,6 +54,8 @@ const useTokenStore = create(
           gradients: JSON.parse(JSON.stringify(s.gradients)),
           elementGradients: { ...s.elementGradients },
           buttonTokens: JSON.parse(JSON.stringify(s.buttonTokens)),
+          buttonTokensDark: JSON.parse(JSON.stringify(s.buttonTokensDark)),
+          buttonTransition: { ...s.buttonTransition },
         };
       },
 
@@ -183,6 +189,23 @@ const useTokenStore = create(
         }));
       },
 
+      setButtonTokenDark: (variant, key, ref) => {
+        get()._pushHistory();
+        set((s) => ({
+          buttonTokensDark: {
+            ...s.buttonTokensDark,
+            [variant]: { ...s.buttonTokensDark[variant], [key]: ref },
+          },
+        }));
+      },
+
+      setButtonTransition: (key, value) => {
+        get()._pushHistory();
+        set((s) => ({
+          buttonTransition: { ...s.buttonTransition, [key]: value },
+        }));
+      },
+
       // --- Actions: Typography ---
       setTypography: (key, value) => {
         get()._pushHistory();
@@ -264,6 +287,8 @@ const useTokenStore = create(
           gradients: { ...DEFAULT_GRADIENTS },
           elementGradients: { ...DEFAULT_ELEMENT_GRADIENTS },
           buttonTokens: { ...DEFAULT_BUTTON_TOKENS },
+          buttonTokensDark: { ...DEFAULT_BUTTON_TOKENS_DARK },
+          buttonTransition: { ...DEFAULT_BUTTON_TRANSITION },
         });
       },
 
@@ -280,6 +305,8 @@ const useTokenStore = create(
           gradients: config.gradients || generateDefaultGradients(colors),
           elementGradients: config.elementGradients || DEFAULT_ELEMENT_GRADIENTS,
           buttonTokens: config.buttonTokens || DEFAULT_BUTTON_TOKENS,
+          buttonTokensDark: config.buttonTokensDark || DEFAULT_BUTTON_TOKENS_DARK,
+          buttonTransition: config.buttonTransition || DEFAULT_BUTTON_TRANSITION,
         });
       },
 
@@ -294,6 +321,8 @@ const useTokenStore = create(
           gradients: s.gradients,
           elementGradients: s.elementGradients,
           buttonTokens: s.buttonTokens,
+          buttonTokensDark: s.buttonTokensDark,
+          buttonTransition: s.buttonTransition,
         };
       },
 
@@ -307,7 +336,7 @@ const useTokenStore = create(
     {
       name: 'bb-ds-config',
       // Bump this when defaults change to force a reset for existing users
-      version: 5,
+      version: 6,
       // Don't persist undo history or computed scales
       partialize: (state) => ({
         foundationColors: state.foundationColors,
@@ -318,6 +347,8 @@ const useTokenStore = create(
         gradients: state.gradients,
         elementGradients: state.elementGradients,
         buttonTokens: state.buttonTokens,
+        buttonTokensDark: state.buttonTokensDark,
+        buttonTransition: state.buttonTransition,
       }),
       // Migrate persisted state to current schema
       migrate: (persisted) => {
@@ -329,6 +360,8 @@ const useTokenStore = create(
           borders: persisted?.borders || { ...DEFAULT_BORDERS },
           elementGradients: persisted?.elementGradients || { ...DEFAULT_ELEMENT_GRADIENTS },
           buttonTokens: persisted?.buttonTokens || { ...DEFAULT_BUTTON_TOKENS },
+          buttonTokensDark: persisted?.buttonTokensDark || { ...DEFAULT_BUTTON_TOKENS_DARK },
+          buttonTransition: persisted?.buttonTransition || { ...DEFAULT_BUTTON_TRANSITION },
         };
         // Always regenerate gradients from foundation colors (ensures per-color coverage)
         state.gradients = generateDefaultGradients(state.foundationColors);

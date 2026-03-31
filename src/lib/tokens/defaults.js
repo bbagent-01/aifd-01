@@ -17,10 +17,17 @@ export const DEFAULT_SEMANTIC = {
   'bg-primary': 'accent-50',
   'bg-surface': 'accent-100',
   'bg-card': 'accent-50',
+  // Dark Backgrounds
+  'bg-dark-primary': 'dark-900',
+  'bg-dark-surface': 'dark-800',
+  'bg-dark-card': 'dark-700',
   // Text
   'text-primary': 'dark-900',
   'text-secondary': 'secondary-700',
   'text-on-action': 'accent-50',
+  // Dark Text
+  'text-dark-primary': 'accent-50',
+  'text-dark-secondary': 'neutral-300',
   // Actions
   'action-primary': 'primary-500',
   'action-primary-hover': 'primary-600',
@@ -74,7 +81,9 @@ export const DEFAULT_SEMANTIC_KEYS = Object.keys(DEFAULT_SEMANTIC);
 // Semantic token groups — for UI organization
 export const SEMANTIC_GROUPS = [
   { label: 'Backgrounds', prefix: 'bg', keys: ['bg-primary', 'bg-surface', 'bg-card'], defaultRef: 'neutral-100' },
+  { label: 'Dark Backgrounds', prefix: 'bg-dark', keys: ['bg-dark-primary', 'bg-dark-surface', 'bg-dark-card'], defaultRef: 'dark-800' },
   { label: 'Text', prefix: 'text', keys: ['text-primary', 'text-secondary', 'text-on-action'], defaultRef: 'dark-800' },
+  { label: 'Dark Text', prefix: 'text-dark', keys: ['text-dark-primary', 'text-dark-secondary'], defaultRef: 'accent-50' },
   { label: 'Actions', prefix: 'action', keys: ['action-primary', 'action-primary-hover', 'action-secondary', 'action-secondary-hover', 'action-destructive', 'action-destructive-hover'], defaultRef: 'primary-500' },
   { label: 'Borders', prefix: 'border', keys: ['border-default', 'border-faint', 'border-focus'], defaultRef: 'neutral-200' },
   { label: 'Feedback', prefix: 'feedback', keys: ['feedback-success', 'feedback-error'], defaultRef: 'neutral-500' },
@@ -97,12 +106,27 @@ export const DEFAULT_ELEMENT_GRADIENTS = {
   container: null,
 };
 
-// Button component tokens — per-variant colors
+// Button component tokens — per-variant, full hover states
+// bg can be a scale ref, 'transparent', or gradient ref like 'gradient-primary'
 export const DEFAULT_BUTTON_TOKENS = {
-  primary:     { bg: 'primary-500',   hover: 'primary-600',   text: 'accent-50',     border: null },
-  secondary:   { bg: 'transparent',   hover: 'secondary-100', text: 'secondary-500',  border: 'neutral-200' },
-  ghost:       { bg: 'transparent',   hover: 'accent-100',    text: 'dark-900',       border: null },
-  destructive: { bg: 'primary-700',   hover: 'primary-800',   text: 'accent-50',      border: null },
+  primary:     { bg: 'primary-500',   text: 'accent-50',      border: null,          hoverBg: 'primary-600',     hoverText: null,        hoverBorder: null },
+  secondary:   { bg: 'transparent',   text: 'secondary-500',  border: 'neutral-200', hoverBg: 'secondary-500',   hoverText: 'accent-50', hoverBorder: 'secondary-500' },
+  ghost:       { bg: 'transparent',   text: 'dark-900',       border: null,          hoverBg: 'accent-100',      hoverText: null,        hoverBorder: null },
+  destructive: { bg: 'primary-700',   text: 'accent-50',      border: null,          hoverBg: 'primary-800',     hoverText: null,        hoverBorder: null },
+};
+
+// Button dark mode variants
+export const DEFAULT_BUTTON_TOKENS_DARK = {
+  primary:     { bg: 'primary-400',   text: 'dark-900',       border: null,          hoverBg: 'primary-300',     hoverText: null,        hoverBorder: null },
+  secondary:   { bg: 'transparent',   text: 'accent-100',     border: 'neutral-600', hoverBg: 'neutral-700',     hoverText: 'accent-50', hoverBorder: 'neutral-500' },
+  ghost:       { bg: 'transparent',   text: 'accent-50',      border: null,          hoverBg: 'dark-700',        hoverText: null,        hoverBorder: null },
+  destructive: { bg: 'primary-600',   text: 'accent-50',      border: null,          hoverBg: 'primary-500',     hoverText: null,        hoverBorder: null },
+};
+
+// Global button transition config
+export const DEFAULT_BUTTON_TRANSITION = {
+  duration: 0.15,
+  easing: 'ease',
 };
 
 // Type scale — derived from baseSize using a ratio

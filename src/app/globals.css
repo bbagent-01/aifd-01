@@ -162,6 +162,17 @@ input[type="color"]::-webkit-color-swatch {
   background-color: var(--bb-action-destructive-hover);
 }
 
+/* Gradient */
+.bb-btn-gradient {
+  background: var(--bb-gradient-primary);
+  color: var(--bb-text-on-action);
+  border: none;
+}
+.bb-btn-gradient:hover {
+  opacity: 0.9;
+  filter: brightness(1.05);
+}
+
 /* Disabled state */
 .bb-btn:disabled {
   opacity: 0.5;

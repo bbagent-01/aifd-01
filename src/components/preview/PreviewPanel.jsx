@@ -1,7 +1,7 @@
 "use client";
 
 import useTokenStore from '@/lib/tokens/store';
-import { TYPE_SCALE } from '@/lib/tokens/defaults';
+import { TYPE_SCALE, SEMANTIC_GROUPS } from '@/lib/tokens/defaults';
 import Button from './atoms/Button';
 import Input from './atoms/Input';
 import Badge from './atoms/Badge';
@@ -53,17 +53,39 @@ function SemanticGrid() {
   const semantic = useTokenStore((s) => s.semantic);
   const scales = useTokenStore((s) => s.scales);
 
+  // Group all semantic tokens by category
+  const getGroupTokens = (group) => {
+    const prefix = group.prefix + '-';
+    const defaultKeys = group.keys.filter((k) => semantic[k]);
+    const customKeys = Object.keys(semantic).filter(
+      (k) => k.startsWith(prefix) && !group.keys.includes(k)
+    );
+    return [...defaultKeys, ...customKeys];
+  };
+
   return (
-    <div className="grid grid-cols-5 gap-2">
-      {Object.entries(semantic).map(([name, ref]) => {
-        const hex = scales[ref] || '#ff00ff';
+    <div className="space-y-4">
+      {SEMANTIC_GROUPS.map((group) => {
+        const tokens = getGroupTokens(group);
+        if (tokens.length === 0) return null;
         return (
-          <div key={name} className="text-center">
-            <div
-              className="w-full h-10 rounded border border-gray-200"
-              style={{ backgroundColor: hex }}
-            />
-            <div className="text-[9px] font-mono text-gray-500 mt-1 truncate">{name}</div>
+          <div key={group.label}>
+            <div className="text-[10px] font-mono text-gray-400 mb-2">{group.label}</div>
+            <div className="grid grid-cols-5 gap-2">
+              {tokens.map((name) => {
+                const ref = semantic[name];
+                const hex = scales[ref] || '#ff00ff';
+                return (
+                  <div key={name} className="text-center">
+                    <div
+                      className="w-full h-10 rounded border border-gray-200"
+                      style={{ backgroundColor: hex }}
+                    />
+                    <div className="text-[9px] font-mono text-gray-500 mt-1 truncate">{name}</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         );
       })}
@@ -71,7 +93,58 @@ function SemanticGrid() {
   );
 }
 
+const PANGRAM = 'The quick brown fox jumps over the lazy dog';
+
+function GradientSwatches() {
+  const gradients = useTokenStore((s) => s.gradients);
+  const scales = useTokenStore((s) => s.scales);
+
+  if (!gradients || Object.keys(gradients).length === 0) {
+    return <div className="text-sm text-gray-400">No gradients defined</div>;
+  }
+
+  return (
+    <div className="grid grid-cols-3 gap-3">
+      {Object.entries(gradients).map(([name, grad]) => {
+        const resolvedStops = grad.stops.map((ref) => scales[ref] || '#ff00ff');
+        const gradientCSS = `linear-gradient(${grad.angle}deg, ${resolvedStops.join(', ')})`;
+        return (
+          <div key={name} className="text-center">
+            <div
+              className="w-full h-16 rounded-lg border border-gray-200"
+              style={{ background: gradientCSS }}
+            />
+            <div className="text-[9px] font-mono text-gray-500 mt-1 truncate">{name}</div>
+            <div className="text-[8px] font-mono text-gray-400 truncate">{grad.angle}° · {grad.stops.join(' → ')}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function TypeLabel({ font, weight, size }) {
+  return (
+    <div style={{
+      fontFamily: 'var(--bb-font-mono)',
+      fontSize: '10px',
+      color: 'var(--bb-text-secondary)',
+      opacity: 0.6,
+      marginTop: '2px',
+    }}>
+      {font} · {weight} · {size}
+    </div>
+  );
+}
+
 function TypeSpecimen() {
+  const typography = useTokenStore((s) => s.typography);
+  const headingSizes = [
+    { label: '5xl', var: 'var(--bb-text-5xl)', size: `${Math.round(typography.baseSize * TYPE_SCALE['5xl'])}px` },
+    { label: '3xl', var: 'var(--bb-text-3xl)', size: `${Math.round(typography.baseSize * TYPE_SCALE['3xl'])}px` },
+    { label: 'xl', var: 'var(--bb-text-xl)', size: `${Math.round(typography.baseSize * TYPE_SCALE.xl)}px` },
+  ];
+
   return (
     <div>
       {/* Eyebrow */}
@@ -88,41 +161,27 @@ function TypeSpecimen() {
       >
         Eyebrow Label
       </div>
-      <div
-        style={{
-          fontFamily: 'var(--bb-font-heading)',
-          fontSize: 'var(--bb-text-5xl)',
-          fontWeight: 'var(--bb-heading-weight)',
-          color: 'var(--bb-text-primary)',
-          lineHeight: 'var(--bb-heading-line-height)',
-        }}
-      >
-        Heading 5XL
-      </div>
-      <div
-        style={{
-          fontFamily: 'var(--bb-font-heading)',
-          fontSize: 'var(--bb-text-3xl)',
-          fontWeight: 'var(--bb-heading-weight)',
-          color: 'var(--bb-text-primary)',
-          lineHeight: 'var(--bb-heading-line-height)',
-          marginTop: 'var(--bb-space-2)',
-        }}
-      >
-        Heading 3XL
-      </div>
-      <div
-        style={{
-          fontFamily: 'var(--bb-font-heading)',
-          fontSize: 'var(--bb-text-xl)',
-          fontWeight: 'var(--bb-heading-weight)',
-          color: 'var(--bb-text-primary)',
-          lineHeight: 'var(--bb-heading-line-height)',
-          marginTop: 'var(--bb-space-2)',
-        }}
-      >
-        Heading XL
-      </div>
+      <TypeLabel font={typography.bodyFont} weight="600" size={`${Math.round(typography.baseSize * TYPE_SCALE.xs)}px`} />
+
+      {/* Headings */}
+      {headingSizes.map((h, i) => (
+        <div key={h.label} style={{ marginTop: i === 0 ? 'var(--bb-space-3)' : 'var(--bb-space-2)' }}>
+          <div
+            style={{
+              fontFamily: 'var(--bb-font-heading)',
+              fontSize: h.var,
+              fontWeight: 'var(--bb-heading-weight)',
+              color: 'var(--bb-text-primary)',
+              lineHeight: 'var(--bb-heading-line-height)',
+            }}
+          >
+            {PANGRAM}
+          </div>
+          <TypeLabel font={typography.headingFont} weight={typography.headingWeight} size={h.size} />
+        </div>
+      ))}
+
+      {/* Body */}
       <p
         style={{
           fontFamily: 'var(--bb-font-body)',
@@ -134,8 +193,11 @@ function TypeSpecimen() {
           maxWidth: '600px',
         }}
       >
-        Body text at base size. This paragraph demonstrates the body font, weight, line height, and secondary text color. All values are driven by design tokens and update in real time.
+        {PANGRAM}. Body text at base size — this paragraph demonstrates the body font, weight, line height, and secondary text color. All values are driven by design tokens.
       </p>
+      <TypeLabel font={typography.bodyFont} weight={typography.bodyWeight} size={`${typography.baseSize}px`} />
+
+      {/* Caption */}
       <div
         style={{
           fontFamily: 'var(--bb-font-body)',
@@ -144,8 +206,11 @@ function TypeSpecimen() {
           marginTop: 'var(--bb-space-2)',
         }}
       >
-        Small / caption text for labels and secondary content.
+        {PANGRAM}. Small / caption text for labels and secondary content.
       </div>
+      <TypeLabel font={typography.bodyFont} weight={typography.bodyWeight} size={`${Math.round(typography.baseSize * TYPE_SCALE.sm)}px`} />
+
+      {/* Code */}
       <code
         style={{
           fontFamily: 'var(--bb-font-mono)',
@@ -159,8 +224,30 @@ function TypeSpecimen() {
           border: '1px solid var(--bb-border-faint)',
         }}
       >
-        const mono = &quot;JetBrains Mono&quot;;
+        const mono = &quot;{typography.monoFont}&quot;;
       </code>
+      <TypeLabel font={typography.monoFont} weight="400" size={`${Math.round(typography.baseSize * TYPE_SCALE.sm)}px`} />
+
+      {/* Running font specimens */}
+      <div style={{ marginTop: 'var(--bb-space-6)', display: 'flex', flexDirection: 'column', gap: 'var(--bb-space-2)' }}>
+        <div className="text-[10px] font-mono text-gray-400 mb-1">Font Specimens</div>
+        {[
+          { name: typography.headingFont, cssVar: 'var(--bb-font-heading)', weight: 'var(--bb-heading-weight)' },
+          { name: typography.bodyFont, cssVar: 'var(--bb-font-body)', weight: 'var(--bb-body-weight)' },
+          { name: typography.monoFont, cssVar: 'var(--bb-font-mono)', weight: '400' },
+        ].map((font) => (
+          <div key={font.name} style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+            <span style={{
+              fontFamily: font.cssVar,
+              fontSize: 'var(--bb-text-lg)',
+              fontWeight: font.weight,
+              color: 'var(--bb-text-primary)',
+            }}>
+              {font.name} — {PANGRAM} {PANGRAM}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -209,6 +296,7 @@ function ComponentShowcase() {
         <Button variant="secondary">Secondary</Button>
         <Button variant="ghost">Ghost</Button>
         <Button variant="destructive">Destructive</Button>
+        <Button variant="gradient">Gradient</Button>
       </div>
 
       {/* Buttons — Sizes */}
@@ -279,6 +367,9 @@ export default function PreviewPanel() {
 
         <SectionTitle>Semantic Colors</SectionTitle>
         <SemanticGrid />
+
+        <SectionTitle>Gradients</SectionTitle>
+        <GradientSwatches />
 
         <SectionTitle>Typography</SectionTitle>
         <TypeSpecimen />

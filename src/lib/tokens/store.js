@@ -4,9 +4,11 @@ import { generateAllScales } from '@/lib/color/scales';
 import {
   DEFAULT_FOUNDATION_COLORS,
   DEFAULT_SEMANTIC,
+  DEFAULT_SEMANTIC_KEYS,
   DEFAULT_TYPOGRAPHY,
   DEFAULT_SPACING,
   DEFAULT_BORDERS,
+  DEFAULT_GRADIENTS,
 } from './defaults';
 
 /**
@@ -24,6 +26,7 @@ const useTokenStore = create(
       typography: { ...DEFAULT_TYPOGRAPHY },
       spacing: { ...DEFAULT_SPACING },
       borders: { ...DEFAULT_BORDERS },
+      gradients: { ...DEFAULT_GRADIENTS },
 
       // Undo history (simple implementation)
       _history: [],
@@ -39,6 +42,7 @@ const useTokenStore = create(
           typography: { ...s.typography },
           spacing: { ...s.spacing },
           borders: { ...s.borders },
+          gradients: JSON.parse(JSON.stringify(s.gradients)),
         };
       },
 
@@ -99,6 +103,47 @@ const useTokenStore = create(
         set((s) => ({
           semantic: { ...s.semantic, [tokenName]: scaleKey },
         }));
+      },
+
+      addSemanticToken: (name, defaultRef) => {
+        get()._pushHistory();
+        set((s) => ({
+          semantic: { ...s.semantic, [name]: defaultRef },
+        }));
+      },
+
+      removeSemanticToken: (name) => {
+        if (DEFAULT_SEMANTIC_KEYS.includes(name)) return; // protect defaults
+        get()._pushHistory();
+        set((s) => {
+          const updated = { ...s.semantic };
+          delete updated[name];
+          return { semantic: updated };
+        });
+      },
+
+      // --- Actions: Gradients ---
+      setGradient: (name, value) => {
+        get()._pushHistory();
+        set((s) => ({
+          gradients: { ...s.gradients, [name]: value },
+        }));
+      },
+
+      addGradient: (name) => {
+        get()._pushHistory();
+        set((s) => ({
+          gradients: { ...s.gradients, [name]: { angle: 135, stops: ['primary-400', 'primary-600'] } },
+        }));
+      },
+
+      removeGradient: (name) => {
+        get()._pushHistory();
+        set((s) => {
+          const updated = { ...s.gradients };
+          delete updated[name];
+          return { gradients: updated };
+        });
       },
 
       // --- Actions: Typography ---
@@ -179,6 +224,7 @@ const useTokenStore = create(
           typography: { ...DEFAULT_TYPOGRAPHY },
           spacing: { ...DEFAULT_SPACING },
           borders: { ...DEFAULT_BORDERS },
+          gradients: { ...DEFAULT_GRADIENTS },
         });
       },
 
@@ -192,6 +238,7 @@ const useTokenStore = create(
           typography: config.typography || DEFAULT_TYPOGRAPHY,
           spacing: config.spacing || DEFAULT_SPACING,
           borders: config.borders || DEFAULT_BORDERS,
+          gradients: config.gradients || DEFAULT_GRADIENTS,
         });
       },
 
@@ -203,6 +250,7 @@ const useTokenStore = create(
           typography: s.typography,
           spacing: s.spacing,
           borders: s.borders,
+          gradients: s.gradients,
         };
       },
 
@@ -216,7 +264,7 @@ const useTokenStore = create(
     {
       name: 'bb-ds-config',
       // Bump this when defaults change to force a reset for existing users
-      version: 2,
+      version: 3,
       // Don't persist undo history or computed scales
       partialize: (state) => ({
         foundationColors: state.foundationColors,
@@ -224,16 +272,31 @@ const useTokenStore = create(
         typography: state.typography,
         spacing: state.spacing,
         borders: state.borders,
+        gradients: state.gradients,
       }),
-      // When version changes, migrate by resetting to new defaults
-      migrate: () => {
-        return {
-          foundationColors: { ...DEFAULT_FOUNDATION_COLORS },
-          semantic: { ...DEFAULT_SEMANTIC },
-          typography: { ...DEFAULT_TYPOGRAPHY },
-          spacing: { ...DEFAULT_SPACING },
-          borders: { ...DEFAULT_BORDERS },
+      // Migrate persisted state to current schema
+      migrate: (persisted) => {
+        const state = {
+          foundationColors: persisted?.foundationColors || { ...DEFAULT_FOUNDATION_COLORS },
+          semantic: persisted?.semantic || { ...DEFAULT_SEMANTIC },
+          typography: persisted?.typography || { ...DEFAULT_TYPOGRAPHY },
+          spacing: persisted?.spacing || { ...DEFAULT_SPACING },
+          borders: persisted?.borders || { ...DEFAULT_BORDERS },
+          gradients: persisted?.gradients || { ...DEFAULT_GRADIENTS },
         };
+        // Migrate v2 flat radius → v3 multiplier system
+        if (state.borders.cardRadius !== undefined && state.borders.cardMult === undefined) {
+          const r = state.borders.radius || 8;
+          state.borders = {
+            radius: r,
+            cardMult: r > 0 ? Math.round((state.borders.cardRadius / r) * 4) / 4 : 1.5,
+            containerMult: r > 0 ? Math.round((state.borders.containerRadius / r) * 4) / 4 : 2,
+            buttonMult: r > 0 ? Math.round((state.borders.buttonRadius / r) * 4) / 4 : 0.75,
+            inputMult: r > 0 ? Math.round((state.borders.inputRadius / r) * 4) / 4 : 0.75,
+            shadow: state.borders.shadow || 'subtle',
+          };
+        }
+        return state;
       },
       // Recompute scales on hydration
       onRehydrateStorage: () => (state) => {

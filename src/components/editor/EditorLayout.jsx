@@ -9,6 +9,7 @@ import ColorSection from './sections/ColorSection';
 import TypographySection from './sections/TypographySection';
 import SpacingSection from './sections/SpacingSection';
 import BorderSection from './sections/BorderSection';
+import GradientSection from './sections/GradientSection';
 import { generateCSS } from '@/lib/export/css';
 import { generateDTCG } from '@/lib/export/dtcg';
 import { downloadJSON, uploadJSON, copyToClipboard } from '@/lib/persistence/storage';
@@ -129,23 +130,31 @@ export default function EditorLayout() {
         <TokenStyleInjector />
 
         {/* Sidebar */}
-        <Sidebar>
-          <SidebarSection title="Colors" defaultOpen={true}>
-            <ColorSection />
-          </SidebarSection>
+        <Sidebar
+          tokenSections={
+            <>
+              <SidebarSection title="Colors" defaultOpen={true}>
+                <ColorSection />
+              </SidebarSection>
 
-          <SidebarSection title="Typography" defaultOpen={false}>
-            <TypographySection />
-          </SidebarSection>
+              <SidebarSection title="Typography" defaultOpen={false}>
+                <TypographySection />
+              </SidebarSection>
 
-          <SidebarSection title="Spacing" defaultOpen={false}>
-            <SpacingSection />
-          </SidebarSection>
+              <SidebarSection title="Spacing" defaultOpen={false}>
+                <SpacingSection />
+              </SidebarSection>
 
-          <SidebarSection title="Borders & Shadows" defaultOpen={false}>
-            <BorderSection />
-          </SidebarSection>
-        </Sidebar>
+              <SidebarSection title="Borders & Shadows" defaultOpen={false}>
+                <BorderSection />
+              </SidebarSection>
+
+              <SidebarSection title="Gradients" defaultOpen={false}>
+                <GradientSection />
+              </SidebarSection>
+            </>
+          }
+        />
 
         {/* Preview */}
         <PreviewPanel />

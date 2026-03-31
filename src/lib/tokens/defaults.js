@@ -58,11 +58,29 @@ export const DEFAULT_SPACING = {
 
 export const DEFAULT_BORDERS = {
   radius: 8,
-  cardRadius: 12,
-  containerRadius: 16,
-  buttonRadius: 6,
-  inputRadius: 6,
+  cardMult: 1.5,
+  containerMult: 2,
+  buttonMult: 0.75,
+  inputMult: 0.75,
   shadow: 'subtle',
+};
+
+// Protected semantic token keys (cannot be removed)
+export const DEFAULT_SEMANTIC_KEYS = Object.keys(DEFAULT_SEMANTIC);
+
+// Semantic token groups — for UI organization
+export const SEMANTIC_GROUPS = [
+  { label: 'Backgrounds', prefix: 'bg', keys: ['bg-primary', 'bg-surface', 'bg-card'], defaultRef: 'neutral-100' },
+  { label: 'Text', prefix: 'text', keys: ['text-primary', 'text-secondary', 'text-on-action'], defaultRef: 'dark-800' },
+  { label: 'Actions', prefix: 'action', keys: ['action-primary', 'action-primary-hover', 'action-secondary', 'action-secondary-hover', 'action-destructive', 'action-destructive-hover'], defaultRef: 'primary-500' },
+  { label: 'Borders', prefix: 'border', keys: ['border-default', 'border-faint', 'border-focus'], defaultRef: 'neutral-200' },
+  { label: 'Feedback', prefix: 'feedback', keys: ['feedback-success', 'feedback-error'], defaultRef: 'neutral-500' },
+];
+
+// Default gradient definitions — stops reference scale keys (cascade with foundation colors)
+export const DEFAULT_GRADIENTS = {
+  'gradient-primary': { angle: 135, stops: ['primary-400', 'primary-600'] },
+  'gradient-accent': { angle: 90, stops: ['accent-300', 'primary-500'] },
 };
 
 // Type scale — derived from baseSize using a ratio

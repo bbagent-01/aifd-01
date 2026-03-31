@@ -4,6 +4,7 @@ import { useState } from 'react';
 import useTokenStore from '@/lib/tokens/store';
 import ScaleStepPicker from '../controls/ScaleStepPicker';
 import { getContrastInfo } from '@/lib/color/contrast';
+import { DEFAULT_SEMANTIC_KEYS, SEMANTIC_GROUPS } from '@/lib/tokens/defaults';
 
 const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
@@ -14,15 +15,6 @@ const CONTRAST_PAIRS = [
   ['text-on-action', 'action-primary'],
 ];
 
-// Group semantic tokens by category for display
-const SEMANTIC_GROUPS = [
-  { label: 'Backgrounds', keys: ['bg-primary', 'bg-surface', 'bg-card'] },
-  { label: 'Text', keys: ['text-primary', 'text-secondary', 'text-on-action'] },
-  { label: 'Actions', keys: ['action-primary', 'action-primary-hover', 'action-secondary', 'action-secondary-hover', 'action-destructive', 'action-destructive-hover'] },
-  { label: 'Borders', keys: ['border-default', 'border-faint', 'border-focus'] },
-  { label: 'Feedback', keys: ['feedback-success', 'feedback-error'] },
-];
-
 export default function ColorSection() {
   const foundationColors = useTokenStore((s) => s.foundationColors);
   const scales = useTokenStore((s) => s.scales);
@@ -31,10 +23,36 @@ export default function ColorSection() {
   const addFoundationColor = useTokenStore((s) => s.addFoundationColor);
   const removeFoundationColor = useTokenStore((s) => s.removeFoundationColor);
   const setSemanticRef = useTokenStore((s) => s.setSemanticRef);
+  const addSemanticToken = useTokenStore((s) => s.addSemanticToken);
+  const removeSemanticToken = useTokenStore((s) => s.removeSemanticToken);
 
   const [newColorName, setNewColorName] = useState('');
+  const [addingGroup, setAddingGroup] = useState(null); // which group is showing the add input
+  const [newTokenName, setNewTokenName] = useState('');
 
   const protectedColors = ['primary', 'neutral', 'dark'];
+
+  // Build the list of tokens per group dynamically from the semantic map
+  const getGroupTokens = (group) => {
+    const prefix = group.prefix + '-';
+    // Start with the group's default keys that exist in semantic
+    const defaultKeys = group.keys.filter((k) => semantic[k]);
+    // Find any custom tokens with the same prefix
+    const customKeys = Object.keys(semantic).filter(
+      (k) => k.startsWith(prefix) && !group.keys.includes(k)
+    );
+    return [...defaultKeys, ...customKeys];
+  };
+
+  const handleAddToken = (group) => {
+    const name = newTokenName.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (!name) return;
+    const fullName = `${group.prefix}-${name}`;
+    if (semantic[fullName]) return; // already exists
+    addSemanticToken(fullName, group.defaultRef);
+    setNewTokenName('');
+    setAddingGroup(null);
+  };
 
   return (
     <div className="space-y-5">
@@ -131,47 +149,104 @@ export default function ColorSection() {
           Semantic Tokens
         </div>
         <div className="space-y-3">
-          {SEMANTIC_GROUPS.map((group) => (
-            <div key={group.label}>
-              <div className="text-[9px] font-mono text-editor-text-muted/60 uppercase tracking-wider mb-1.5">
-                {group.label}
-              </div>
-              <div className="space-y-1">
-                {group.keys.filter((k) => semantic[k]).map((name) => {
-                  const ref = semantic[name];
-                  const pair = CONTRAST_PAIRS.find(([fg]) => fg === name);
-                  let contrastInfo = null;
-                  if (pair) {
-                    const fgHex = scales[semantic[pair[0]]] || '#000';
-                    const bgHex = scales[semantic[pair[1]]] || '#fff';
-                    contrastInfo = getContrastInfo(fgHex, bgHex);
-                  }
+          {SEMANTIC_GROUPS.map((group) => {
+            const tokens = getGroupTokens(group);
+            return (
+              <div key={group.label}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="text-[9px] font-mono text-editor-text-muted/60 uppercase tracking-wider">
+                    {group.label}
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (addingGroup === group.label) {
+                        setAddingGroup(null);
+                        setNewTokenName('');
+                      } else {
+                        setAddingGroup(group.label);
+                        setNewTokenName('');
+                      }
+                    }}
+                    className="text-[10px] text-editor-accent hover:text-editor-accent-hover transition-colors"
+                    title={`Add ${group.label.toLowerCase()} token`}
+                  >
+                    +
+                  </button>
+                </div>
 
-                  return (
-                    <div key={name} className="flex items-center gap-2">
-                      <ScaleStepPicker
-                        currentRef={ref}
-                        onSelect={(key) => setSemanticRef(name, key)}
-                      />
-                      <span className="text-[10px] font-mono text-editor-text flex-1 truncate">{name}</span>
-                      {contrastInfo && (
-                        <span
-                          className={`text-[9px] font-mono px-1 py-0.5 rounded ${
-                            contrastInfo.level === 'AAA' ? 'bg-green-900/40 text-green-400' :
-                            contrastInfo.level === 'AA' ? 'bg-yellow-900/40 text-yellow-400' :
-                            'bg-red-900/40 text-red-400'
-                          }`}
-                          title={`Contrast ratio: ${contrastInfo.ratio}:1`}
-                        >
-                          {contrastInfo.ratio} {contrastInfo.level}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
+                {/* Add token input */}
+                {addingGroup === group.label && (
+                  <div className="flex gap-1 mb-2">
+                    <span className="text-[10px] text-editor-text-muted py-1">{group.prefix}-</span>
+                    <input
+                      type="text"
+                      value={newTokenName}
+                      onChange={(e) => setNewTokenName(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                      placeholder="name"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleAddToken(group);
+                        if (e.key === 'Escape') { setAddingGroup(null); setNewTokenName(''); }
+                      }}
+                      className="flex-1 bg-editor-bg border border-editor-border rounded px-2 py-1 text-[10px] text-editor-text outline-none focus:border-editor-accent"
+                    />
+                    <button
+                      onClick={() => handleAddToken(group)}
+                      className="bg-editor-accent text-white text-[10px] px-2 py-1 rounded hover:bg-editor-accent-hover transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  {tokens.map((name) => {
+                    const ref = semantic[name];
+                    if (!ref) return null;
+                    const isCustom = !DEFAULT_SEMANTIC_KEYS.includes(name);
+                    const pair = CONTRAST_PAIRS.find(([fg]) => fg === name);
+                    let contrastInfo = null;
+                    if (pair) {
+                      const fgHex = scales[semantic[pair[0]]] || '#000';
+                      const bgHex = scales[semantic[pair[1]]] || '#fff';
+                      contrastInfo = getContrastInfo(fgHex, bgHex);
+                    }
+
+                    return (
+                      <div key={name} className="flex items-center gap-2">
+                        <ScaleStepPicker
+                          currentRef={ref}
+                          onSelect={(key) => setSemanticRef(name, key)}
+                        />
+                        <span className="text-[10px] font-mono text-editor-text flex-1 truncate">{name}</span>
+                        {contrastInfo && (
+                          <span
+                            className={`text-[9px] font-mono px-1 py-0.5 rounded ${
+                              contrastInfo.level === 'AAA' ? 'bg-green-900/40 text-green-400' :
+                              contrastInfo.level === 'AA' ? 'bg-yellow-900/40 text-yellow-400' :
+                              'bg-red-900/40 text-red-400'
+                            }`}
+                            title={`Contrast ratio: ${contrastInfo.ratio}:1`}
+                          >
+                            {contrastInfo.ratio} {contrastInfo.level}
+                          </span>
+                        )}
+                        {isCustom && (
+                          <button
+                            onClick={() => removeSemanticToken(name)}
+                            className="text-editor-text-muted hover:text-red-400 text-[10px] transition-colors"
+                            title="Remove token"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

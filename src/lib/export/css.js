@@ -6,7 +6,7 @@ import { TYPE_SCALE, SHADOW_PRESETS } from '@/lib/tokens/defaults';
  * @param {string} mode - 'resolved' (flat values) or 'referenced' (var() chains)
  */
 export function generateCSS(state, mode = 'resolved') {
-  const { scales, semantic, typography, spacing, borders } = state;
+  const { scales, semantic, typography, spacing, borders, gradients } = state;
   const lines = [':root {'];
 
   if (mode === 'referenced') {
@@ -56,13 +56,23 @@ export function generateCSS(state, mode = 'resolved') {
 
   lines.push('');
 
-  // Borders
-  lines.push(`  --bb-radius: ${borders.radius}px;`);
-  lines.push(`  --bb-card-radius: ${borders.cardRadius}px;`);
-  lines.push(`  --bb-container-radius: ${borders.containerRadius}px;`);
-  lines.push(`  --bb-button-radius: ${borders.buttonRadius}px;`);
-  lines.push(`  --bb-input-radius: ${borders.inputRadius}px;`);
+  // Borders (derived from base radius × multiplier)
+  const r = borders.radius;
+  lines.push(`  --bb-radius: ${r}px;`);
+  lines.push(`  --bb-card-radius: ${Math.round(r * (borders.cardMult || 1.5))}px;`);
+  lines.push(`  --bb-container-radius: ${Math.round(r * (borders.containerMult || 2))}px;`);
+  lines.push(`  --bb-button-radius: ${Math.round(r * (borders.buttonMult || 0.75))}px;`);
+  lines.push(`  --bb-input-radius: ${Math.round(r * (borders.inputMult || 0.75))}px;`);
   lines.push(`  --bb-shadow: ${SHADOW_PRESETS[borders.shadow] || 'none'};`);
+
+  // Gradients
+  if (gradients) {
+    lines.push('');
+    for (const [name, grad] of Object.entries(gradients)) {
+      const resolvedStops = grad.stops.map((ref) => scales[ref] || '#ff00ff');
+      lines.push(`  --bb-${name}: linear-gradient(${grad.angle}deg, ${resolvedStops.join(', ')});`);
+    }
+  }
 
   lines.push('}');
   return lines.join('\n');

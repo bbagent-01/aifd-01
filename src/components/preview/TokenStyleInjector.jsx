@@ -15,6 +15,7 @@ export default function TokenStyleInjector() {
   const typography = useTokenStore((s) => s.typography);
   const spacing = useTokenStore((s) => s.spacing);
   const borders = useTokenStore((s) => s.borders);
+  const gradients = useTokenStore((s) => s.gradients);
 
   useEffect(() => {
     const lines = [':root {'];
@@ -55,13 +56,22 @@ export default function TokenStyleInjector() {
     lines.push(`  --bb-component-gap: ${spacing.componentGap}px;`);
     lines.push(`  --bb-max-width: ${spacing.maxWidth}px;`);
 
-    // Borders & shadows
-    lines.push(`  --bb-radius: ${borders.radius}px;`);
-    lines.push(`  --bb-card-radius: ${borders.cardRadius}px;`);
-    lines.push(`  --bb-container-radius: ${borders.containerRadius}px;`);
-    lines.push(`  --bb-button-radius: ${borders.buttonRadius}px;`);
-    lines.push(`  --bb-input-radius: ${borders.inputRadius}px;`);
+    // Borders & shadows (derived from base radius × multiplier)
+    const r = borders.radius;
+    lines.push(`  --bb-radius: ${r}px;`);
+    lines.push(`  --bb-card-radius: ${Math.round(r * (borders.cardMult || 1.5))}px;`);
+    lines.push(`  --bb-container-radius: ${Math.round(r * (borders.containerMult || 2))}px;`);
+    lines.push(`  --bb-button-radius: ${Math.round(r * (borders.buttonMult || 0.75))}px;`);
+    lines.push(`  --bb-input-radius: ${Math.round(r * (borders.inputMult || 0.75))}px;`);
     lines.push(`  --bb-shadow: ${SHADOW_PRESETS[borders.shadow] || 'none'};`);
+
+    // Gradients (resolve scale refs to hex)
+    if (gradients) {
+      for (const [name, grad] of Object.entries(gradients)) {
+        const resolvedStops = grad.stops.map((ref) => scales[ref] || '#ff00ff');
+        lines.push(`  --bb-${name}: linear-gradient(${grad.angle}deg, ${resolvedStops.join(', ')});`);
+      }
+    }
 
     lines.push('}');
 
@@ -77,7 +87,7 @@ export default function TokenStyleInjector() {
     return () => {
       // Don't remove on unmount — persist until page unload
     };
-  }, [scales, semantic, typography, spacing, borders]);
+  }, [scales, semantic, typography, spacing, borders, gradients]);
 
   return null;
 }
